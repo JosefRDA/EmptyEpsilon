@@ -258,14 +258,14 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     presets_button->setTextSize(20);
     presets_button->setSize(125, 25);
 
-    for(int presetId=0; presetId <= 12; presetId++)
+    for(int presetId=EP_1; presetId <= EP_12; presetId++)
     {
 
         GuiAutoLayout* preset_button_layout = new GuiAutoLayout(layout, "", GuiAutoLayout::LayoutHorizontalLeftToRight);
         preset_button_layout->setSize(300, GuiElement::GuiSizeMax);
         GuiButton* preset_button_apply = new GuiButton(preset_button_layout, "", tr("preset", "preset") + " " + std::to_string(presetId), [this, presetId]()
         {
-            savePresets();
+            savePresets(static_cast<EEngineerPresets>(presetId));
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
@@ -274,15 +274,16 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         preset_button_apply->setTextSize(20);
         preset_button_apply->setSize(100, 25);   
         presets_buttons.push_back(preset_button_apply);
-        GuiButton* preset_button_save = new GuiButton(preset_button_layout, "", tr("S", "S"), [this, presetId]()
+        GuiButton* preset_button_save = new GuiButton(preset_button_layout, "", "", [this, presetId]()
         {
-            savePresets();
+            savePresets(static_cast<EEngineerPresets>(presetId));
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
         });
         preset_button_save->setVisible(false);
         preset_button_save->setTextSize(20);
+        preset_button_save->setIcon("gui/icons/self-destruct");
         preset_button_save->setSize(25, 25);   
         presets_buttons.push_back(preset_button_save);
 
@@ -292,9 +293,9 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     }
 }
 
-void EngineeringScreen::savePresets()
+void EngineeringScreen::savePresets(EEngineerPresets preset)
 {
-    my_spaceship->addToShipLog("toto", colorConfig.log_receive_neutral, engineering);
+    my_spaceship->addToShipLog("toto" + std::to_string(preset), colorConfig.log_receive_neutral, engineering);
 }
 
 void EngineeringScreen::onDraw(sf::RenderTarget& window)

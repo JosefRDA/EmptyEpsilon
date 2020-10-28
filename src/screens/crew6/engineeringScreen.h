@@ -4,6 +4,7 @@
 #include "gui/gui2_overlay.h"
 #include "shipTemplate.h"
 #include "playerInfo.h"
+#include "spaceObjects/playerSpaceship.h"
 
 class GuiSelfDestructButton;
 class GuiKeyValueDisplay;
@@ -78,7 +79,7 @@ public:
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;
-    virtual void savePresets();
+    virtual void savePresets(EEngineerPresets preset);
 };
 
 #endif//ENGINEERING_SCREEN_H

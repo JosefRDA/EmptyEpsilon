@@ -29,6 +29,22 @@ enum EAlertLevel
     AL_MAX          // ?
 };
 
+enum EEngineerPresets
+{
+    EP_1,
+    EP_2,
+    EP_3,
+    EP_4,
+    EP_5,
+    EP_6,
+    EP_7,
+    EP_8,
+    EP_9,
+    EP_10,
+    EP_11,
+    EP_12
+};
+
 class PlayerSpaceship : public SpaceShip
 {
 public:
