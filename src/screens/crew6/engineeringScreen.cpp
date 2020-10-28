@@ -265,7 +265,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         preset_button_layout->setSize(300, GuiElement::GuiSizeMax);
         GuiButton* preset_button_apply = new GuiButton(preset_button_layout, "", tr("preset", "preset") + " " + std::to_string(presetId), [this, presetId]()
         {
-            savePresets(static_cast<EEngineerPresets>(presetId));
+            applyPreset(static_cast<EEngineerPresets>(presetId));
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
@@ -276,7 +276,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         presets_buttons.push_back(preset_button_apply);
         GuiButton* preset_button_save = new GuiButton(preset_button_layout, "", "", [this, presetId]()
         {
-            savePresets(static_cast<EEngineerPresets>(presetId));
+            savePreset(static_cast<EEngineerPresets>(presetId));
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
@@ -293,9 +293,27 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     }
 }
 
-void EngineeringScreen::savePresets(EEngineerPresets preset)
+void EngineeringScreen::applyPreset(EEngineerPresets preset)
 {
     my_spaceship->addToShipLog("toto" + std::to_string(preset), colorConfig.log_receive_neutral, engineering);
+    
+    my_spaceship->addToShipLog("toto" + std::to_string(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first), colorConfig.log_receive_neutral, engineering);
+
+    for(int n=0; n<SYS_COUNT; n++)
+    {
+        ESystem system = ESystem(n);
+        power_slider->setValue(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first);
+        coolant_slider->setValue(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).second);
+        my_spaceship->commandSetSystemPowerRequest(system, power_slider->getValue());
+        my_spaceship->commandSetSystemCoolantRequest(system, coolant_slider->getValue());
+    }
+}
+
+void EngineeringScreen::savePreset(EEngineerPresets preset)
+{
+    my_spaceship->addToShipLog("toto" + std::to_string(preset), colorConfig.log_receive_neutral, engineering);
+    
+    my_spaceship->addToShipLog("toto" + std::to_string(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first), colorConfig.log_receive_neutral, engineering);
 }
 
 void EngineeringScreen::onDraw(sf::RenderTarget& window)
@@ -649,7 +667,7 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
         }
 
         if(PlayerSpaceship::keyToEngineerPreset.find(key.hotkey) != PlayerSpaceship::keyToEngineerPreset.end()) {
-            savePresets(PlayerSpaceship::keyToEngineerPreset.at(key.hotkey));
+            applyPreset(PlayerSpaceship::keyToEngineerPreset.at(key.hotkey));
         }
     }
 }

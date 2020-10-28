@@ -79,7 +79,8 @@ public:
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;
-    virtual void savePresets(EEngineerPresets preset);
+    virtual void applyPreset(EEngineerPresets preset);
+    virtual void savePreset(EEngineerPresets preset);
 };
 
 #endif//ENGINEERING_SCREEN_H
