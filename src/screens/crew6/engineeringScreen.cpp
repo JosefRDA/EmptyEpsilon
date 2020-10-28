@@ -299,11 +299,11 @@ void EngineeringScreen::applyPreset(EEngineerPresets preset)
     
     my_spaceship->addToShipLog("toto" + std::to_string(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first), colorConfig.log_receive_neutral, engineering);
 
-    for(int n=0; n<SYS_COUNT; n++)
+    for(int systemId=0; systemId<SYS_COUNT; systemId++)
     {
         ESystem system = ESystem(n);
-        power_slider->setValue(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first);
-        coolant_slider->setValue(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).second);
+        power_slider->setValue(my_spaceship->engineerPresets.at(preset).at(static_cast<ESystem>(systemId)).first);
+        coolant_slider->setValue(my_spaceship->engineerPresets.at(preset).at(static_cast<ESystem>(systemId)).second);
         my_spaceship->commandSetSystemPowerRequest(system, power_slider->getValue());
         my_spaceship->commandSetSystemCoolantRequest(system, coolant_slider->getValue());
     }
