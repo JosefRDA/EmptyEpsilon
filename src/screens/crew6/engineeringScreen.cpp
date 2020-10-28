@@ -246,6 +246,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     // Bottom layout.
     GuiAutoLayout* layout = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutVerticalBottomToTop);
     layout->setPosition(-20, -20, ABottomRight)->setSize(300, GuiElement::GuiSizeMax);
+    std::vector<GuiAutoLayout*> presets_buttons_layouts;
 
     // Presets buttons.
     presets_button = new GuiToggleButton(layout, "PRESET", tr("presets", "presets"), [this](bool value)
@@ -255,22 +256,39 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     });
     presets_button->setValue(false);
     presets_button->setTextSize(20);
-    //presets_button->setPosition(-20, -20, ABottomRight);
     presets_button->setSize(125, 25);
 
     for(int presetId=0; presetId <= 12; presetId++)
     {
-        GuiButton* preset_button = new GuiButton(layout, "", tr("presets", "presets") + " " + std::to_string(presetId), [this, presetId]()
+
+        GuiAutoLayout* preset_button_layout = new GuiAutoLayout(layout, "", GuiAutoLayout::LayoutHorizontalLeftToRight);
+        preset_button_layout->setSize(300, GuiElement::GuiSizeMax);
+        GuiButton* preset_button_apply = new GuiButton(preset_button_layout, "", tr("preset", "preset") + " " + std::to_string(presetId), [this, presetId]()
         {
             savePresets();
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
         });
-        preset_button->setVisible(false);
-        preset_button->setTextSize(20);
-        preset_button->setSize(125, 25);   
-        presets_buttons.push_back(preset_button);
+        preset_button_apply->setVisible(false);
+        preset_button_apply->setTextSize(20);
+        preset_button_apply->setSize(100, 25);   
+        presets_buttons.push_back(preset_button_apply);
+        GuiButton* preset_button_save = new GuiButton(preset_button_layout, "", tr("S", "S"), [this, presetId]()
+        {
+            savePresets();
+            for(GuiButton* button : presets_buttons)
+                button->setVisible(false);
+            presets_button->setValue(false);
+        });
+        preset_button_save->setVisible(false);
+        preset_button_save->setTextSize(20);
+        preset_button_save->setSize(25, 25);   
+        presets_buttons.push_back(preset_button_save);
+
+        //preset_button_layout->setVisible(false);
+        preset_button_layout->setSize(125, 25);   
+        presets_buttons_layouts.push_back(preset_button_layout);
     }
 }
 
