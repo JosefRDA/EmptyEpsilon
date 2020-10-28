@@ -276,7 +276,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         presets_buttons.push_back(preset_button_apply);
         GuiButton* preset_button_save = new GuiButton(preset_button_layout, "", "", [this, presetId]()
         {
-            savePreset(static_cast<EEngineerPresets>(presetId));
+            updatePreset(static_cast<EEngineerPresets>(presetId));
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
@@ -295,25 +295,27 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
 
 void EngineeringScreen::applyPreset(EEngineerPresets preset)
 {
-    my_spaceship->addToShipLog("toto" + std::to_string(preset), colorConfig.log_receive_neutral, engineering);
-    
-    my_spaceship->addToShipLog("toto" + std::to_string(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first), colorConfig.log_receive_neutral, engineering);
-
     for(int systemId=0; systemId<SYS_COUNT; systemId++)
     {
-        ESystem system = ESystem(n);
-        power_slider->setValue(my_spaceship->engineerPresets.at(preset).at(static_cast<ESystem>(systemId)).first);
-        coolant_slider->setValue(my_spaceship->engineerPresets.at(preset).at(static_cast<ESystem>(systemId)).second);
+        ESystem system = ESystem(systemId);
+        power_slider->setValue(my_spaceship->engineerPresets.at(preset).at(system).first);
+        coolant_slider->setValue(my_spaceship->engineerPresets.at(preset).at(system).second);
         my_spaceship->commandSetSystemPowerRequest(system, power_slider->getValue());
         my_spaceship->commandSetSystemCoolantRequest(system, coolant_slider->getValue());
     }
 }
 
-void EngineeringScreen::savePreset(EEngineerPresets preset)
-{
-    my_spaceship->addToShipLog("toto" + std::to_string(preset), colorConfig.log_receive_neutral, engineering);
-    
-    my_spaceship->addToShipLog("toto" + std::to_string(my_spaceship->engineerPresets.at(preset).at(SYS_Reactor).first), colorConfig.log_receive_neutral, engineering);
+void EngineeringScreen::updatePreset(EEngineerPresets preset)
+{    
+
+    std::map<ESystem, std::pair<float, float>> updatedEngineerPreset;
+    for(int systemId=0; systemId<SYS_COUNT; systemId++)
+    {
+        ESystem system = ESystem(systemId);    
+        updatedEngineerPreset.insert(std::make_pair(system, std::make_pair(my_spaceship->systems[system].power_request, my_spaceship->systems[system].coolant_request)));
+    }
+
+     my_spaceship->engineerPresets[preset] = updatedEngineerPreset;
 }
 
 void EngineeringScreen::onDraw(sf::RenderTarget& window)

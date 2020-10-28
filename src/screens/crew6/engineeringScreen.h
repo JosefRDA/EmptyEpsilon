@@ -80,7 +80,7 @@ public:
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;
     virtual void applyPreset(EEngineerPresets preset);
-    virtual void savePreset(EEngineerPresets preset);
+    virtual void updatePreset(EEngineerPresets preset);
 };
 
 #endif//ENGINEERING_SCREEN_H
