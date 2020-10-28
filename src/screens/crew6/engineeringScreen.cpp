@@ -258,7 +258,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     presets_button->setTextSize(20);
     presets_button->setSize(125, 25);
 
-    for(int presetId=EP_1; presetId <= EP_12; presetId++)
+    for(int presetId=EP_1; presetId < EP_MAX; presetId++)
     {
 
         GuiAutoLayout* preset_button_layout = new GuiAutoLayout(layout, "", GuiAutoLayout::LayoutHorizontalLeftToRight);

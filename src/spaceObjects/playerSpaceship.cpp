@@ -439,6 +439,14 @@ PlayerSpaceship::PlayerSpaceship()
             registerMemberReplication(&waypoints[r][wp]);
         }
     }
+
+    for(int presetId=EP_1; presetId < EP_MAX; presetId++) {
+        std::map<ESystem, std::pair<float, float>> engineerPreset;
+        for(int systemId=0; systemId<SYS_COUNT; systemId++) {
+            engineerPreset.insert(std::make_pair( static_cast<ESystem>(systemId), engineerPresetSystemDefaultValue));
+        }
+        engineerPresets.insert( std::make_pair( static_cast<EEngineerPresets>(presetId), engineerPreset));
+    }
     registerMemberReplication(&scan_probe_stock);
     registerMemberReplication(&activate_self_destruct);
     registerMemberReplication(&self_destruct_countdown, 0.2);

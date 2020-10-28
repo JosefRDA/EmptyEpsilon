@@ -31,7 +31,7 @@ enum EAlertLevel
 
 enum EEngineerPresets
 {
-    EP_1,
+    EP_1 = 1,
     EP_2,
     EP_3,
     EP_4,
@@ -42,7 +42,8 @@ enum EEngineerPresets
     EP_9,
     EP_10,
     EP_11,
-    EP_12
+    EP_12,
+    EP_MAX
 };
 
 class PlayerSpaceship : public SpaceShip
@@ -157,11 +158,13 @@ private:
     float short_range_radar_range = 5000.0f;
 public:
     std::vector<CustomShipFunction> custom_functions;
-
+    
     sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
 
     // Function keys to Engineer Presets maping
     static std::map<std::string,EEngineerPresets> keyToEngineerPreset;
+
+    std::map<EEngineerPresets, std::map<ESystem, std::pair<float, float>>> engineerPresets;
 
     // Ship functionality
     // Capable of scanning a target
@@ -460,6 +463,8 @@ static const sf::Color routeColors[PlayerSpaceship::max_routes] = {
     sf::Color::White, sf::Color::Magenta, sf::Color::Green, 
     sf::Color::Red, sf::Color::Yellow, sf::Color::Blue, 
     sf::Color::Cyan};
+
+static const std::pair<float, float> engineerPresetSystemDefaultValue = std::make_pair(1.0f, 0.0f);
 
 #ifdef _MSC_VER
 #include "playerSpaceship.hpp"
