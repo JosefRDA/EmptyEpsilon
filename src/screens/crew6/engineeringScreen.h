@@ -12,6 +12,7 @@ class GuiSlider;
 class GuiAutoLayout;
 class GuiImage;
 class GuiArrow;
+class GuiButton;
 class GuiToggleButton;
 class GuiProgressbar;
 class GuiProgressSlider;
@@ -40,6 +41,9 @@ private:
     GuiSlider* coolant_slider;
     GuiLabel* repair_label;
     GuiSlider* repair_slider;
+
+    GuiToggleButton* presets_button;
+    std::vector<GuiButton*> presets_buttons;
 
     class SystemRow
     {

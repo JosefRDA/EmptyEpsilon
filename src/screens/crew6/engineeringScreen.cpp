@@ -67,11 +67,6 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     self_destruct_button = new GuiSelfDestructButton(this, "SELF_DESTRUCT");
     self_destruct_button->setPosition(20, 20, ATopLeft)->setSize(240, 100)->setVisible(my_spaceship && my_spaceship->getCanSelfDestruct());
 
-    (new GuiButton(this, "SAVE_PRESET", tr("save presets", "save presets"), [this]() {
-        savePresets();
-    }))->setTextSize(20)->setPosition(-20, -20, ABottomRight)->setSize(125, 25);
-
-
     GuiElement* system_config_container = new GuiElement(this, "");
     system_config_container->setPosition(0, -60, ABottomCenter)->setSize(750 + 300, GuiElement::GuiSizeMax);
     GuiAutoLayout* system_row_layouts = new GuiAutoLayout(system_config_container, "SYSTEM_ROWS", GuiAutoLayout::LayoutVerticalBottomToTop);
@@ -247,6 +242,36 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     previous_energy_level = 0.0;
     average_energy_delta = 0.0;
     previous_energy_measurement = 0.0;
+
+    // Bottom layout.
+    GuiAutoLayout* layout = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutVerticalBottomToTop);
+    layout->setPosition(-20, -20, ABottomRight)->setSize(300, GuiElement::GuiSizeMax);
+
+    // Presets buttons.
+    presets_button = new GuiToggleButton(layout, "PRESET", tr("presets", "presets"), [this](bool value)
+    {
+        for(GuiButton* button : presets_buttons)
+            button->setVisible(value);
+    });
+    presets_button->setValue(false);
+    presets_button->setTextSize(20);
+    //presets_button->setPosition(-20, -20, ABottomRight);
+    presets_button->setSize(125, 25);
+
+    for(int presetId=0; presetId <= 12; presetId++)
+    {
+        GuiButton* preset_button = new GuiButton(layout, "", tr("presets", "presets") + " " + std::to_string(presetId), [this, presetId]()
+        {
+            savePresets();
+            for(GuiButton* button : presets_buttons)
+                button->setVisible(false);
+            presets_button->setValue(false);
+        });
+        preset_button->setVisible(false);
+        preset_button->setTextSize(20);
+        preset_button->setSize(125, 25);   
+        presets_buttons.push_back(preset_button);
+    }
 }
 
 void EngineeringScreen::savePresets()
