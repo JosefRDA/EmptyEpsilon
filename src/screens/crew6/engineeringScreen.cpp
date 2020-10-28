@@ -67,6 +67,11 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     self_destruct_button = new GuiSelfDestructButton(this, "SELF_DESTRUCT");
     self_destruct_button->setPosition(20, 20, ATopLeft)->setSize(240, 100)->setVisible(my_spaceship && my_spaceship->getCanSelfDestruct());
 
+    (new GuiButton(this, "SAVE_PRESET", tr("save presets", "save presets"), [this]() {
+        savePresets();
+    }))->setTextSize(20)->setPosition(-20, -20, ABottomRight)->setSize(125, 25);
+
+
     GuiElement* system_config_container = new GuiElement(this, "");
     system_config_container->setPosition(0, -60, ABottomCenter)->setSize(750 + 300, GuiElement::GuiSizeMax);
     GuiAutoLayout* system_row_layouts = new GuiAutoLayout(system_config_container, "SYSTEM_ROWS", GuiAutoLayout::LayoutVerticalBottomToTop);
@@ -242,6 +247,11 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     previous_energy_level = 0.0;
     average_energy_delta = 0.0;
     previous_energy_measurement = 0.0;
+}
+
+void EngineeringScreen::savePresets()
+{
+    my_spaceship->addToShipLog("toto", colorConfig.log_receive_neutral, engineering);
 }
 
 void EngineeringScreen::onDraw(sf::RenderTarget& window)
