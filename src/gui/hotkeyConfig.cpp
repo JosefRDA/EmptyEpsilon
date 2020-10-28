@@ -140,6 +140,18 @@ HotkeyConfig::HotkeyConfig()
     newKey("SELF_DESTRUCT_START", std::make_tuple("Start self-destruct", ""));
     newKey("SELF_DESTRUCT_CONFIRM", std::make_tuple("Confirm self-destruct", ""));
     newKey("SELF_DESTRUCT_CANCEL", std::make_tuple("Cancel self-destruct", ""));
+    newKey("PRESET_APPLY_1", std::make_tuple("Apply engineer preset 1", "F1"));
+    newKey("PRESET_APPLY_2", std::make_tuple("Apply engineer preset 2", "F2"));
+    newKey("PRESET_APPLY_3", std::make_tuple("Apply engineer preset 3", "F3"));
+    newKey("PRESET_APPLY_4", std::make_tuple("Apply engineer preset 4", "F4"));
+    newKey("PRESET_APPLY_5", std::make_tuple("Apply engineer preset 5", "F5"));
+    newKey("PRESET_APPLY_6", std::make_tuple("Apply engineer preset 6", "F6"));
+    newKey("PRESET_APPLY_7", std::make_tuple("Apply engineer preset 7", "F7"));
+    newKey("PRESET_APPLY_8", std::make_tuple("Apply engineer preset 8", "F8"));
+    newKey("PRESET_APPLY_9", std::make_tuple("Apply engineer preset 9", "F9"));
+    newKey("PRESET_APPLY_10", std::make_tuple("Apply engineer preset 10", "F10"));
+    newKey("PRESET_APPLY_11", std::make_tuple("Apply engineer preset 11", "F11"));
+    newKey("PRESET_APPLY_12", std::make_tuple("Apply engineer preset 12", "F12"));
 
     newCategory("RELAY", "Relay");
     newKey("OPEN_COMM", std::make_tuple("Open Comms", "F11"));

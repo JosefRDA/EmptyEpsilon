@@ -647,6 +647,10 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
                 my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
             }
         }
+
+        if(PlayerSpaceship::keyToEngineerPreset.find(key.hotkey) != PlayerSpaceship::keyToEngineerPreset.end()) {
+            savePresets(PlayerSpaceship::keyToEngineerPreset.at(key.hotkey));
+        }
     }
 }
 

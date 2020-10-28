@@ -160,6 +160,9 @@ public:
 
     sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
 
+    // Function keys to Engineer Presets maping
+    static std::map<std::string,EEngineerPresets> keyToEngineerPreset;
+
     // Ship functionality
     // Capable of scanning a target
     bool can_scan = true;
