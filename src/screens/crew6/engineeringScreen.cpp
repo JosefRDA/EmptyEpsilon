@@ -309,10 +309,8 @@ void EngineeringScreen::applyPreset(EEngineerPresets preset)
     for(int systemId=0; systemId<SYS_COUNT; systemId++)
     {
         ESystem system = ESystem(systemId);
-        power_slider->setValue(my_spaceship->engineerPresets.at(preset).at(system).first);
-        coolant_slider->setValue(my_spaceship->engineerPresets.at(preset).at(system).second);
-        my_spaceship->commandSetSystemPowerRequest(system, power_slider->getValue());
-        my_spaceship->commandSetSystemCoolantRequest(system, coolant_slider->getValue());
+        my_spaceship->commandSetSystemPowerRequest(system, my_spaceship->engineerPresets.at(preset).at(system).first);
+        my_spaceship->commandSetSystemCoolantRequest(system, my_spaceship->engineerPresets.at(preset).at(system).second);
     }
 }
 
