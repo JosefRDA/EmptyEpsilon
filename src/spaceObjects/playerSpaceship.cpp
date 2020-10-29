@@ -910,7 +910,7 @@ void PlayerSpaceship::saveToPreferencesEngineerPresets()
 
 string PlayerSpaceship::getEngineerPresetPreferenceKey(int presetId) 
 {
-    const string engineerPresetPreferenceKeyPrefix = "ENGINEER.PRESET_";
+    const string engineerPresetPreferenceKeyPrefix = "ENGINEERING.PRESET_";
     return engineerPresetPreferenceKeyPrefix + std::string(2 - std::to_string(presetId).length(), '0') + std::to_string(presetId);
 }
 
