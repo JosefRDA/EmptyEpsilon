@@ -277,6 +277,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         GuiButton* preset_button_update = new GuiButton(preset_button_layout, "", "", [this, presetId]()
         {
             updatePreset(static_cast<EEngineerPresets>(presetId));
+            my_spaceship->saveToPreferencesEngineerPresets();
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
@@ -291,17 +292,6 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         preset_button_layout->setSize(125, 25);   
         presets_buttons_layouts.push_back(preset_button_layout);
     }
-    GuiButton* preset_button_save = new GuiButton(layout, "SAVE_PRESETS", tr("save presets", "save presets"), [this]()
-    {
-        my_spaceship->saveToPreferencesEngineerPresets();
-        for(GuiButton* button : presets_buttons)
-            button->setVisible(false);
-        presets_button->setValue(false);
-    });
-    preset_button_save->setVisible(false);
-    preset_button_save->setTextSize(20);
-    preset_button_save->setSize(125, 25);
-    presets_buttons.push_back(preset_button_save);
 }
 
 void EngineeringScreen::applyPreset(EEngineerPresets preset)
