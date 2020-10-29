@@ -891,7 +891,7 @@ void PlayerSpaceship::loadOrInitEngineerPresets()
         {
             for(int systemId=0; systemId<SYS_COUNT; systemId++)
             {
-                engineerPreset.insert(std::make_pair( static_cast<ESystem>(systemId), engineerPresetSystemDefaultValue));
+                engineerPreset.insert(std::make_pair( static_cast<ESystem>(systemId), std::make_pair(1.0f, 0.0f)));
             }
             engineerPresets[static_cast<EEngineerPresets>(presetId)] = engineerPreset;
         }

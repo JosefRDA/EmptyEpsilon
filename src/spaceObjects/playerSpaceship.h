@@ -471,8 +471,6 @@ static const sf::Color routeColors[PlayerSpaceship::max_routes] = {
     sf::Color::Red, sf::Color::Yellow, sf::Color::Blue, 
     sf::Color::Cyan};
 
-static const std::pair<float, float> engineerPresetSystemDefaultValue = std::make_pair(1.0f, 0.0f);
-
 #ifdef _MSC_VER
 #include "playerSpaceship.hpp"
 #endif /* _MSC_VER */
