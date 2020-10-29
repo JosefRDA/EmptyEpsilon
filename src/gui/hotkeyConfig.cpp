@@ -140,18 +140,26 @@ HotkeyConfig::HotkeyConfig()
     newKey("SELF_DESTRUCT_START", std::make_tuple("Start self-destruct", ""));
     newKey("SELF_DESTRUCT_CONFIRM", std::make_tuple("Confirm self-destruct", ""));
     newKey("SELF_DESTRUCT_CANCEL", std::make_tuple("Cancel self-destruct", ""));
-    newKey("PRESET_APPLY_1", std::make_tuple("Apply engineer preset 1", "Numpad1"));
-    newKey("PRESET_APPLY_2", std::make_tuple("Apply engineer preset 2", "Numpad2"));
-    newKey("PRESET_APPLY_3", std::make_tuple("Apply engineer preset 3", "Numpad3"));
-    newKey("PRESET_APPLY_4", std::make_tuple("Apply engineer preset 4", "Numpad4"));
-    newKey("PRESET_APPLY_5", std::make_tuple("Apply engineer preset 5", "Numpad5"));
-    newKey("PRESET_APPLY_6", std::make_tuple("Apply engineer preset 6", "Numpad6"));
-    newKey("PRESET_APPLY_7", std::make_tuple("Apply engineer preset 7", "Numpad7"));
-    newKey("PRESET_APPLY_8", std::make_tuple("Apply engineer preset 8", "Numpad8"));
-    newKey("PRESET_APPLY_9", std::make_tuple("Apply engineer preset 9", "Numpad9"));
-    newKey("PRESET_APPLY_10", std::make_tuple("Apply engineer preset 10", "Numpad0"));
-    newKey("PRESET_APPLY_11", std::make_tuple("Apply engineer preset 11", ""));
-    newKey("PRESET_APPLY_12", std::make_tuple("Apply engineer preset 12", ""));
+    int max_engineer_presets_number =-1;
+    if (!PreferencesManager::get("ENGINEERING.PRESETS.COUNT.MAX").empty()) 
+    {
+        max_engineer_presets_number = std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.MAX"));
+    }
+    if(max_engineer_presets_number < 0 || max_engineer_presets_number > 25)
+    {
+        max_engineer_presets_number = 9; //if preference undefinded or higher than max display size take default value
+    }
+    for(int presetId=0; presetId < max_engineer_presets_number; presetId++) 
+    {
+        if(max_engineer_presets_number < 10 ) 
+        {
+            newKey("PRESET_APPLY" + std::to_string(presetId + 1), std::make_tuple("Apply engineer preset " + std::to_string(presetId + 1), "Numpad" + std::to_string(presetId + 1)));
+        } 
+        else
+        {
+            newKey("PRESET_APPLY" + std::to_string(presetId + 1), std::make_tuple("Apply engineer preset " + std::to_string(presetId + 1), ""));
+        }
+    }
 
     newCategory("RELAY", "Relay");
     newKey("OPEN_COMM", std::make_tuple("Open Comms", "F11"));

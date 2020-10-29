@@ -847,7 +847,25 @@ void PlayerSpaceship::update(float delta)
 
 void PlayerSpaceship::loadOrInitEngineerPresets()
 {    
-    for(int presetId=EP_1; presetId < EP_MAX; presetId++)
+    if (!PreferencesManager::get("ENGINEERING.PRESETS.COUNT.MAX").empty()) 
+    {
+        max_engineer_presets_number = std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.MAX"));
+    }
+    if(max_engineer_presets_number < 0 || max_engineer_presets_number > 25)
+    {
+        max_engineer_presets_number = 9; //if preference undefinded or higher than max display size take default value
+    }
+
+    if (!PreferencesManager::get("ENGINEERING.PRESETS.COUNT.DEFAULT").empty()) 
+    {
+        active_engineer_presets_number = std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.DEFAULT"));
+    }
+    if(active_engineer_presets_number < 0 || active_engineer_presets_number > max_engineer_presets_number)
+    {
+        active_engineer_presets_number = max_engineer_presets_number; //if preference undefinded or higher than max take max value
+    }
+    
+    for(int presetId=1; presetId < max_engineer_presets_number + 1; presetId++)
     {
 
         bool engineerPresetsHasBeenInitialized = false;
@@ -863,7 +881,7 @@ void PlayerSpaceship::loadOrInitEngineerPresets()
                     auto values = systems[systemId].split(":");
                     engineerPreset.insert(std::make_pair( static_cast<ESystem>(systemId), std::make_pair(values[0].toFloat(), values[1].toFloat())));
                 }
-                engineerPresets.insert( std::make_pair( static_cast<EEngineerPresets>(presetId), engineerPreset));
+                engineerPresets.insert( std::make_pair( presetId, engineerPreset));
                 engineerPresetsHasBeenInitialized = true;
             }
         } catch (...)
@@ -877,22 +895,22 @@ void PlayerSpaceship::loadOrInitEngineerPresets()
             {
                 engineerPreset.insert(std::make_pair( static_cast<ESystem>(systemId), std::make_pair(1.0f, 0.0f)));
             }
-            engineerPresets[static_cast<EEngineerPresets>(presetId)] = engineerPreset;
+            engineerPresets[presetId] = engineerPreset;
         }
     }
 }
 
 void PlayerSpaceship::saveToPreferencesEngineerPresets()
 {
-    for(int presetId=EP_1; presetId < EP_MAX; presetId++)
+    for(int presetId=1; presetId < active_engineer_presets_number + 1; presetId++)
     {
         std::stringstream engineerPresetStringStream;
         engineerPresetStringStream << std::fixed << std::setprecision(2);
         for(int systemId=0; systemId<SYS_COUNT; systemId++)
         {
-            engineerPresetStringStream << engineerPresets.at(static_cast<EEngineerPresets>(presetId)).at(static_cast<ESystem>(systemId)).first;
+            engineerPresetStringStream << engineerPresets.at(presetId).at(static_cast<ESystem>(systemId)).first;
             engineerPresetStringStream << ":";
-            engineerPresetStringStream << engineerPresets.at(static_cast<EEngineerPresets>(presetId)).at(static_cast<ESystem>(systemId)).second;
+            engineerPresetStringStream << engineerPresets.at(presetId).at(static_cast<ESystem>(systemId)).second;
             if(systemId < SYS_COUNT-1)
             {
                 engineerPresetStringStream << "|";

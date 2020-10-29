@@ -24,6 +24,13 @@
 EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_position)
 : GuiOverlay(owner, "ENGINEERING_SCREEN", colorConfig.background), selected_system(SYS_None)
 {
+    // Engineering presets
+    for(int presetId=1; presetId < my_spaceship->max_engineer_presets_number + 1; presetId++)
+    {
+        keyToEngineerPreset.insert(std::make_pair("PRESET_APPLY_" + std::to_string(presetId) , presetId));
+    }
+    
+
     // Render the background decorations.
     background_crosses = new GuiOverlay(this, "BACKGROUND_CROSSES", sf::Color::White);
     background_crosses->setTextureTiled("gui/BackgroundCrosses");
@@ -251,21 +258,21 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     // Presets buttons.
     presets_button = new GuiToggleButton(layout, "PRESET", tr("preset", "presets"), [this](bool value)
     {
-        for(GuiButton* button : presets_buttons)
-            button->setVisible(value);
+        for(int buttonId = 0 ; buttonId < my_spaceship->active_engineer_presets_number*2 ; buttonId++)
+            presets_buttons.at(buttonId)->setVisible(value);
     });
     presets_button->setValue(false);
     presets_button->setTextSize(20);
     presets_button->setSize(125, 25);
 
-    for(int presetId=EP_1; presetId < EP_MAX; presetId++)
+    for(int presetId=1; presetId < my_spaceship->max_engineer_presets_number + 1; presetId++)
     {
 
         GuiAutoLayout* preset_button_layout = new GuiAutoLayout(layout, "", GuiAutoLayout::LayoutHorizontalLeftToRight);
         preset_button_layout->setSize(300, GuiElement::GuiSizeMax);
         GuiButton* preset_button_apply = new GuiButton(preset_button_layout, "", tr("preset", "preset") + " " + std::to_string(presetId), [this, presetId]()
         {
-            applyPreset(static_cast<EEngineerPresets>(presetId));
+            applyPreset(presetId);
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
@@ -276,7 +283,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         presets_buttons.push_back(preset_button_apply);
         GuiButton* preset_button_update = new GuiButton(preset_button_layout, "", "", [this, presetId]()
         {
-            updatePreset(static_cast<EEngineerPresets>(presetId));
+            updatePreset(presetId);
             my_spaceship->saveToPreferencesEngineerPresets();
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
@@ -294,23 +301,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     }
 }
 
-// Function keys to Engineer Presets maping
-std::map<std::string,EEngineerPresets> EngineeringScreen::keyToEngineerPreset = {
-    {"PRESET_APPLY_1" , EP_1},
-    {"PRESET_APPLY_2" , EP_2},
-    {"PRESET_APPLY_3" , EP_3},
-    {"PRESET_APPLY_4" , EP_4},
-    {"PRESET_APPLY_5" , EP_5},
-    {"PRESET_APPLY_6" , EP_6},
-    {"PRESET_APPLY_7" , EP_7},
-    {"PRESET_APPLY_8" , EP_8},
-    {"PRESET_APPLY_9" , EP_9},
-    {"PRESET_APPLY_10" , EP_10},
-    {"PRESET_APPLY_11" , EP_11},
-    {"PRESET_APPLY_12" , EP_12}
-};
-
-void EngineeringScreen::applyPreset(EEngineerPresets preset)
+void EngineeringScreen::applyPreset(int preset)
 {
     for(int systemId=0; systemId<SYS_COUNT; systemId++)
     {
@@ -320,7 +311,7 @@ void EngineeringScreen::applyPreset(EEngineerPresets preset)
     }
 }
 
-void EngineeringScreen::updatePreset(EEngineerPresets preset)
+void EngineeringScreen::updatePreset(int preset)
 {    
     std::map<ESystem, std::pair<float, float>> updatedEngineerPreset;
     for(int systemId=0; systemId<SYS_COUNT; systemId++)
@@ -682,7 +673,8 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
             }
         }
 
-        if(keyToEngineerPreset.find(key.hotkey) != keyToEngineerPreset.end()) {
+        if(keyToEngineerPreset.find(key.hotkey) != keyToEngineerPreset.end() 
+            && keyToEngineerPreset.at(key.hotkey) <= my_spaceship->active_engineer_presets_number) {
             applyPreset(keyToEngineerPreset.at(key.hotkey));
         }
     }

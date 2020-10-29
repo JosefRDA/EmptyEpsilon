@@ -47,7 +47,7 @@ private:
     std::vector<GuiButton*> presets_buttons;
 
     // Function keys to Engineer Presets maping
-    static std::map<std::string,EEngineerPresets> keyToEngineerPreset;
+    std::map<std::string,int> keyToEngineerPreset;
 
     class SystemRow
     {
@@ -82,8 +82,8 @@ public:
     virtual void onDraw(sf::RenderTarget& window) override;
     virtual void onHotkey(const HotkeyResult& key) override;
     virtual bool onJoystickAxis(const AxisAction& axisAction) override;
-    virtual void applyPreset(EEngineerPresets preset);
-    virtual void updatePreset(EEngineerPresets preset);
+    virtual void applyPreset(int preset);
+    virtual void updatePreset(int preset);
 };
 
 #endif//ENGINEERING_SCREEN_H

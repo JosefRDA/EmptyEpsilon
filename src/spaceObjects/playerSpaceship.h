@@ -29,23 +29,6 @@ enum EAlertLevel
     AL_MAX          // ?
 };
 
-enum EEngineerPresets
-{
-    EP_1 = 1,
-    EP_2,
-    EP_3,
-    EP_4,
-    EP_5,
-    EP_6,
-    EP_7,
-    EP_8,
-    EP_9,
-    EP_10,
-    EP_11,
-    EP_12,
-    EP_MAX
-};
-
 class PlayerSpaceship : public SpaceShip
 {
 public:
@@ -164,7 +147,9 @@ public:
     
     sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
 
-    std::map<EEngineerPresets, std::map<ESystem, std::pair<float, float>>> engineerPresets;
+    std::map<int, std::map<ESystem, std::pair<float, float>>> engineerPresets;
+    int active_engineer_presets_number = -1;
+    int max_engineer_presets_number = -1;
 
     // Ship functionality
     // Capable of scanning a target
