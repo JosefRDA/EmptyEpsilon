@@ -249,7 +249,7 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     std::vector<GuiAutoLayout*> presets_buttons_layouts;
 
     // Presets buttons.
-    presets_button = new GuiToggleButton(layout, "PRESET", tr("presets", "presets"), [this](bool value)
+    presets_button = new GuiToggleButton(layout, "PRESET", tr("preset", "presets"), [this](bool value)
     {
         for(GuiButton* button : presets_buttons)
             button->setVisible(value);
@@ -312,8 +312,8 @@ void EngineeringScreen::updatePreset(EEngineerPresets preset)
         ESystem system = ESystem(systemId);    
         updatedEngineerPreset.insert(std::make_pair(system, std::make_pair(my_spaceship->systems[system].power_request, my_spaceship->systems[system].coolant_request)));
     }
-
-     my_spaceship->engineerPresets[preset] = updatedEngineerPreset;
+    my_spaceship->engineerPresets[preset] = updatedEngineerPreset;
+    my_spaceship->addToShipLog(tr("preset", "preset") + " " + std::to_string(preset) + " " + tr("preset", "updated"), colorConfig.log_receive_neutral, engineering);
 }
 
 void EngineeringScreen::onDraw(sf::RenderTarget& window)
