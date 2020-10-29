@@ -2,6 +2,7 @@
 #include "tweak.h"
 #include "playerInfo.h"
 #include "gameGlobalInfo.h"
+#include "preferenceManager.h"
 #include "spaceObjects/spaceship.h"
 
 #include "gui/gui2_listbox.h"
@@ -1029,6 +1030,14 @@ GuiShipTweakPlayer2::GuiShipTweakPlayer2(GuiContainer* owner)
         target->setFarRangeRadarRange(value);
     });
     far_range_radar_slider->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
+
+
+
+    (new GuiLabel(left_col, "", tr("Engineering presets:"), 30))->setSize(GuiElement::GuiSizeMax, 50);
+    engineering_presets_slider = new GuiSlider(left_col, "", 0,  std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.MAX")), 0, [this](int value) {
+        target->active_engineer_presets_number = value;
+    });
+    engineering_presets_slider->addSnapValue(std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.DEFAULT")),1)->addOverlay()->setSize(GuiElement::GuiSizeMax, 40);
 
     // Right column
     // Can scan bool

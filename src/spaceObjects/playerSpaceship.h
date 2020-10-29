@@ -149,6 +149,7 @@ public:
 
     std::map<int, std::map<ESystem, std::pair<float, float>>> engineerPresets;
     int active_engineer_presets_number = -1;
+    int default_engineer_presets_number = -1;
     int max_engineer_presets_number = -1;
 
     // Ship functionality

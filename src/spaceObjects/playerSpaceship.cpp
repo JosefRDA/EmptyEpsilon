@@ -858,12 +858,13 @@ void PlayerSpaceship::loadOrInitEngineerPresets()
 
     if (!PreferencesManager::get("ENGINEERING.PRESETS.COUNT.DEFAULT").empty()) 
     {
-        active_engineer_presets_number = std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.DEFAULT"));
+        default_engineer_presets_number = std::stoi(PreferencesManager::get("ENGINEERING.PRESETS.COUNT.DEFAULT"));
     }
-    if(active_engineer_presets_number < 0 || active_engineer_presets_number > max_engineer_presets_number)
+    if(default_engineer_presets_number < 0 || default_engineer_presets_number > max_engineer_presets_number)
     {
-        active_engineer_presets_number = max_engineer_presets_number; //if preference undefinded or higher than max take max value
+        default_engineer_presets_number = max_engineer_presets_number; //if preference undefinded or higher than max take max value
     }
+    active_engineer_presets_number = default_engineer_presets_number;
     
     for(int presetId=1; presetId < max_engineer_presets_number + 1; presetId++)
     {
