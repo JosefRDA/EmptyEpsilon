@@ -274,23 +274,34 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         preset_button_apply->setTextSize(20);
         preset_button_apply->setSize(100, 25);   
         presets_buttons.push_back(preset_button_apply);
-        GuiButton* preset_button_save = new GuiButton(preset_button_layout, "", "", [this, presetId]()
+        GuiButton* preset_button_update = new GuiButton(preset_button_layout, "", "", [this, presetId]()
         {
             updatePreset(static_cast<EEngineerPresets>(presetId));
             for(GuiButton* button : presets_buttons)
                 button->setVisible(false);
             presets_button->setValue(false);
         });
-        preset_button_save->setVisible(false);
-        preset_button_save->setTextSize(20);
-        preset_button_save->setIcon("gui/icons/self-destruct");
-        preset_button_save->setSize(25, 25);   
-        presets_buttons.push_back(preset_button_save);
+        preset_button_update->setVisible(false);
+        preset_button_update->setTextSize(20);
+        preset_button_update->setIcon("gui/icons/self-destruct");
+        preset_button_update->setSize(25, 25);   
+        presets_buttons.push_back(preset_button_update);
 
         //preset_button_layout->setVisible(false);
         preset_button_layout->setSize(125, 25);   
         presets_buttons_layouts.push_back(preset_button_layout);
     }
+    GuiButton* preset_button_save = new GuiButton(layout, "SAVE_PRESETS", tr("save presets", "save presets"), [this]()
+    {
+        my_spaceship->saveToPreferencesEngineerPresets();
+        for(GuiButton* button : presets_buttons)
+            button->setVisible(false);
+        presets_button->setValue(false);
+    });
+    preset_button_save->setVisible(false);
+    preset_button_save->setTextSize(20);
+    preset_button_save->setSize(125, 25);
+    presets_buttons.push_back(preset_button_save);
 }
 
 void EngineeringScreen::applyPreset(EEngineerPresets preset)
@@ -307,7 +318,6 @@ void EngineeringScreen::applyPreset(EEngineerPresets preset)
 
 void EngineeringScreen::updatePreset(EEngineerPresets preset)
 {    
-
     std::map<ESystem, std::pair<float, float>> updatedEngineerPreset;
     for(int systemId=0; systemId<SYS_COUNT; systemId++)
     {

@@ -394,6 +394,10 @@ public:
     void setRepairCrewCount(int amount);
     EAlertLevel getAlertLevel() { return alert_level; }
 
+    // Engineer presets
+    void loadOrInitEngineerPresets();
+    void saveToPreferencesEngineerPresets();
+
     // Ship noise scanning functions
     float getScanningNoise() { return scanning_noise; }
     void setScanningNoise(float value){ scanning_noise = value; }
