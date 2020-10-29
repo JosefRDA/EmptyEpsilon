@@ -156,6 +156,9 @@ private:
     float far_range_radar_range = 50000.0f;
     float long_range_radar_range = 30000.0f;
     float short_range_radar_range = 5000.0f;
+
+    string getEngineerPresetPreferenceKey(int presetId);
+
 public:
     std::vector<CustomShipFunction> custom_functions;
     

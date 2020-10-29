@@ -870,9 +870,9 @@ void PlayerSpaceship::loadOrInitEngineerPresets()
 
         std::map<ESystem, std::pair<float, float>> engineerPreset;
         try {
-            if (!PreferencesManager::get("ENGINEER.PRESET_"+std::to_string(presetId)).empty()) 
+            if (!PreferencesManager::get(getEngineerPresetPreferenceKey(presetId)).empty()) 
             {
-                string preset = PreferencesManager::get("ENGINEER.PRESET_"+std::to_string(presetId));
+                string preset = PreferencesManager::get(getEngineerPresetPreferenceKey(presetId));
                 auto systems = preset.split("|");
                 for(int systemId=0; systemId<SYS_COUNT; systemId++)
                 {                   
@@ -913,7 +913,7 @@ void PlayerSpaceship::saveToPreferencesEngineerPresets()
                 engineerPresetStringStream << "|";
             }
         }
-        PreferencesManager::set("ENGINEER.PRESET_"+std::to_string(presetId), engineerPresetStringStream.str());
+        PreferencesManager::set(getEngineerPresetPreferenceKey(presetId), engineerPresetStringStream.str());
     }
 
     //Save preferences
@@ -921,6 +921,12 @@ void PlayerSpaceship::saveToPreferencesEngineerPresets()
             PreferencesManager::save(string(getenv("HOME")) + "/.emptyepsilon/options.ini");
         else
             PreferencesManager::save("options.ini");
+}
+
+string PlayerSpaceship::getEngineerPresetPreferenceKey(int presetId) 
+{
+    const string engineerPresetPreferenceKeyPrefix = "ENGINEER.PRESET_";
+    return engineerPresetPreferenceKeyPrefix + std::string(2 - std::to_string(presetId).length(), '0') + std::to_string(presetId);
 }
 
 void PlayerSpaceship::applyTemplateValues()
