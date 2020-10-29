@@ -903,11 +903,12 @@ void PlayerSpaceship::saveToPreferencesEngineerPresets()
     for(int presetId=EP_1; presetId < EP_MAX; presetId++)
     {
         std::stringstream engineerPresetStringStream;
+        engineerPresetStringStream << std::fixed << std::setprecision(2);
         for(int systemId=0; systemId<SYS_COUNT; systemId++)
         {
-            engineerPresetStringStream << std::fixed << std::setprecision(2) << engineerPresets.at(static_cast<EEngineerPresets>(presetId)).at(static_cast<ESystem>(systemId)).first;
+            engineerPresetStringStream << engineerPresets.at(static_cast<EEngineerPresets>(presetId)).at(static_cast<ESystem>(systemId)).first;
             engineerPresetStringStream << ":";
-            engineerPresetStringStream << std::fixed << std::setprecision(2) << engineerPresets.at(static_cast<EEngineerPresets>(presetId)).at(static_cast<ESystem>(systemId)).second;
+            engineerPresetStringStream << engineerPresets.at(static_cast<EEngineerPresets>(presetId)).at(static_cast<ESystem>(systemId)).second;
             if(systemId < SYS_COUNT-1)
             {
                 engineerPresetStringStream << "|";
