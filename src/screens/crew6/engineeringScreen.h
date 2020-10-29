@@ -46,6 +46,9 @@ private:
     GuiToggleButton* presets_button;
     std::vector<GuiButton*> presets_buttons;
 
+    // Function keys to Engineer Presets maping
+    static std::map<std::string,EEngineerPresets> keyToEngineerPreset;
+
     class SystemRow
     {
     public:

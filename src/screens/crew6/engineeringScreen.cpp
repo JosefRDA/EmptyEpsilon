@@ -294,6 +294,22 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     }
 }
 
+// Function keys to Engineer Presets maping
+std::map<std::string,EEngineerPresets> EngineeringScreen::keyToEngineerPreset = {
+    {"PRESET_APPLY_1" , EP_1},
+    {"PRESET_APPLY_2" , EP_2},
+    {"PRESET_APPLY_3" , EP_3},
+    {"PRESET_APPLY_4" , EP_4},
+    {"PRESET_APPLY_5" , EP_5},
+    {"PRESET_APPLY_6" , EP_6},
+    {"PRESET_APPLY_7" , EP_7},
+    {"PRESET_APPLY_8" , EP_8},
+    {"PRESET_APPLY_9" , EP_9},
+    {"PRESET_APPLY_10" , EP_10},
+    {"PRESET_APPLY_11" , EP_11},
+    {"PRESET_APPLY_12" , EP_12}
+};
+
 void EngineeringScreen::applyPreset(EEngineerPresets preset)
 {
     for(int systemId=0; systemId<SYS_COUNT; systemId++)
@@ -666,8 +682,8 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
             }
         }
 
-        if(PlayerSpaceship::keyToEngineerPreset.find(key.hotkey) != PlayerSpaceship::keyToEngineerPreset.end()) {
-            applyPreset(PlayerSpaceship::keyToEngineerPreset.at(key.hotkey));
+        if(keyToEngineerPreset.find(key.hotkey) != keyToEngineerPreset.end()) {
+            applyPreset(keyToEngineerPreset.at(key.hotkey));
         }
     }
 }

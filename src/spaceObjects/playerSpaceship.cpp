@@ -332,22 +332,6 @@ string alertLevelToLocaleString(EAlertLevel level)
 static inline sf::Packet& operator << (sf::Packet& packet, const PlayerSpaceship::ShipLogEntry& e) { return packet << e.prefix << e.text << e.color.r << e.color.g << e.color.b << e.color.a  << e.position; }
 static inline sf::Packet& operator >> (sf::Packet& packet, PlayerSpaceship::ShipLogEntry& e) { packet >> e.prefix >> e.text >> e.color.r >> e.color.g >> e.color.b >> e.color.a  >> e.position; return packet; }
 
-// Function keys to Engineer Presets maping
-std::map<std::string,EEngineerPresets> PlayerSpaceship::keyToEngineerPreset = {
-    {"PRESET_APPLY_1" , EP_1},
-    {"PRESET_APPLY_2" , EP_2},
-    {"PRESET_APPLY_3" , EP_3},
-    {"PRESET_APPLY_4" , EP_4},
-    {"PRESET_APPLY_5" , EP_5},
-    {"PRESET_APPLY_6" , EP_6},
-    {"PRESET_APPLY_7" , EP_7},
-    {"PRESET_APPLY_8" , EP_8},
-    {"PRESET_APPLY_9" , EP_9},
-    {"PRESET_APPLY_10" , EP_10},
-    {"PRESET_APPLY_11" , EP_11},
-    {"PRESET_APPLY_12" , EP_12}
-};
-
 REGISTER_MULTIPLAYER_CLASS(PlayerSpaceship, "PlayerSpaceship");
 PlayerSpaceship::PlayerSpaceship()
 : SpaceShip("PlayerSpaceship", 5000)

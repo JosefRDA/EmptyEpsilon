@@ -164,9 +164,6 @@ public:
     
     sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
 
-    // Function keys to Engineer Presets maping
-    static std::map<std::string,EEngineerPresets> keyToEngineerPreset;
-
     std::map<EEngineerPresets, std::map<ESystem, std::pair<float, float>>> engineerPresets;
 
     // Ship functionality
