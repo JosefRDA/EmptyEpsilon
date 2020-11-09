@@ -7,7 +7,11 @@ ScenarioInfo::ScenarioInfo(string filename)
     name = filename.substr(9, -4);
 
     P<ResourceStream> stream = getResourceStream(filename);
-    if (!stream) return;
+    if (!stream)
+    {
+        LOG(ERROR) << "Scenario not found: " << filename;
+        return;
+    }
 
     string key;
     string value;
@@ -52,7 +56,7 @@ void ScenarioInfo::addKeyValue(string key, string value)
     }
     else if (key.lower() == "author")
     {
-        type = value;
+        author = value;
     }
     else if (key.lower() == "type")
     {

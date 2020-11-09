@@ -2,6 +2,8 @@
 #include "factionInfo.h"
 #include "gameGlobalInfo.h"
 
+#include "spaceObjects/explosionEffect.h"
+
 #include "scriptInterface.h"
 /// SpaceObject is the base for every object which can be seen in space.
 /// General properties can read and set for each object.
@@ -102,15 +104,30 @@ REGISTER_SCRIPT_CLASS_NO_CREATE(SpaceObject)
     /// Sets the communications script used when this object is hailed.
     /// Accepts the filename of a Lua script as a string, or can be set to an
     /// empty string to disable comms with this object.
+    /// In the script, `comms_source` (or `player`, deprecated) (PlayerSpaceship)
+    /// and `comms_target` (SpaceObject) are available.
+    /// Compare `setCommsFunction`.
     /// Examples:
     ///   obj:setCommsScript("")
     ///   obj:setCommsScript("comms_custom_script.lua")
+    /// Defaults:
+    ///   "comms_station.lua" (in `spaceStation.cpp`)
+    ///   "comms_ship.lua" (in `cpuShip.cpp`)
+    /// Call `setCommsMessage` once and `addCommsReply` zero or more times in each dialogue.
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, setCommsScript);
     /// Defines a callback function to use when handling hails, in lieu of any
     /// current or default comms script.
     /// For a detailed example, see scenario_53_escape.lua.
-    /// Requires the name of a function to call back to when hailed.
+    /// Requires a function to call back to when hailed.
+    /// The globals `comms_source` (PlayerSpaceship)
+    /// and `comms_target` (SpaceObject) are made available in the scenario script.
+    /// (Note: They remain as globals. As usual, such globals are not accessible in required files.)
+    /// Compare `setCommsScript`.
     /// Example: obj:setCommsFunction(commsStation)
+    /// where commsStation is a function
+    /// calling `setCommsMessage` once and `addCommsReply` zero or more times.
+    /// Instead of using the globals, the callback can take two parameters.
+    /// Example: obj:setCommsFunction(function(comms_source, comms_target) ... end)
     REGISTER_SCRIPT_CLASS_FUNCTION(SpaceObject, setCommsFunction);
     /// Set this object's callsign. Objects are assigned random callsigns at
     /// creation; this function overrides that default.
@@ -372,6 +389,25 @@ void SpaceObject::destroy()
 {
     on_destroyed.call(P<SpaceObject>(this));
     MultiplayerObject::destroy();
+}
+
+void SpaceObject::takeDamage(float damage_amount, DamageInfo info)
+{
+    // If no hull, then it could no be destroyed
+    if(hull <= 0)
+        return;
+    if (info.type == DT_EMP)
+        return;
+
+    hull -= damage_amount;
+    if (hull <= 0)
+    {
+        P<ExplosionEffect> e = new ExplosionEffect();
+        e->setSize(getRadius());
+        e->setPosition(getPosition());
+        e->setPositionZ(getPositionZ());
+        destroy();
+    }
 }
 
 bool SpaceObject::canBeTargetedBy(P<SpaceObject> other)

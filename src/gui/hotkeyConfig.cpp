@@ -50,9 +50,10 @@ HotkeyConfig::HotkeyConfig()
     newKey("INC_JUMP", std::make_tuple("Increase jump distance", ""));
     newKey("DEC_JUMP", std::make_tuple("Decrease jump distance", ""));
     newKey("JUMP", std::make_tuple("Initiate jump", ""));
-    //newKey("COMBAT_LEFT", "Combat maneuver left");
-    //newKey("COMBAT_RIGHT", "Combat maneuver right");
-    //newKey("COMBAT_BOOST", "Combat maneuver boost");
+    newKey("COMBAT_LEFT", std::make_tuple("Combat maneuver left", ""));
+    newKey("COMBAT_RIGHT", std::make_tuple("Combat maneuver right", ""));
+    newKey("COMBAT_BOOST", std::make_tuple("Combat maneuver boost", ""));
+    newKey("COMBAT_STOP", std::make_tuple("Combat maneuver stop", ""));
 
     newCategory("WEAPONS", "Weapons");
     newKey("SELECT_MISSILE_TYPE_HOMING", std::make_tuple("Select homing", "Num1"));
@@ -140,6 +141,11 @@ HotkeyConfig::HotkeyConfig()
     newKey("SELF_DESTRUCT_START", std::make_tuple("Start self-destruct", ""));
     newKey("SELF_DESTRUCT_CONFIRM", std::make_tuple("Confirm self-destruct", ""));
     newKey("SELF_DESTRUCT_CANCEL", std::make_tuple("Cancel self-destruct", ""));
+    for(int presetId=1; presetId < 10; presetId++) 
+    {
+        newKey("PRESET_APPLY" + string(presetId), std::make_tuple("Apply engineer preset " + string(presetId), "Numpad" + string(presetId)));
+            newKey("PRESET_UPDATE" + string(presetId), std::make_tuple("Update engineer preset " + string(presetId), "[shift]Numpad" + string(presetId)));
+    }
 
     newCategory("RELAY", "Relay");
     newKey("OPEN_COMM", std::make_tuple("Open Comms", "F11"));

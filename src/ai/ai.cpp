@@ -1,6 +1,10 @@
 #include "spaceObjects/nebula.h"
 #include "spaceObjects/cpuShip.h"
 #include "spaceObjects/scanProbe.h"
+#include "spaceObjects/asteroid.h"
+#include "spaceObjects/warpJammer.h"
+#include "spaceObjects/mine.h"
+#include "spaceObjects/missiles/missileWeapon.h"
 #include "ai/ai.h"
 #include "ai/aiFactory.h"
 
@@ -83,21 +87,6 @@ static int getDirectionIndex(float direction, float arc)
     if (fabs(sf::angleDifference(direction, 270.0f)) < arc / 2.0f)
         return 3;
     return -1;
-}
-
-static float getMissileWeaponStrength(EMissileWeapons type)
-{
-    switch(type)
-    {
-    case MW_Nuke:
-        return 250;
-    case MW_EMP:
-        return 150;
-    case MW_HVLI:
-        return 20;
-    default:
-        return 35;
-    }
 }
 
 void ShipAI::updateWeaponState(float delta)
@@ -614,7 +603,9 @@ P<SpaceObject> ShipAI::findBestTarget(sf::Vector2f position, float radius)
     foreach(Collisionable, obj, objectList)
     {
         P<SpaceObject> space_object = obj;
-        if (!space_object || !space_object->canBeTargetedBy(owner) || !owner->isEnemy(space_object) || space_object == target)
+        if (!space_object || !space_object->canBeTargetedBy(owner) || !owner->isEnemy(space_object) || space_object == target || space_object->hull < 0)
+            continue;
+        if (P<Asteroid>(space_object) || P<VisualAsteroid>(space_object))
             continue;
         if (space_object->canHideInNebula() && Nebula::blockedByNebula(owner_position, space_object->getPosition()))
             continue;
@@ -642,9 +633,15 @@ float ShipAI::targetScore(P<SpaceObject> target)
     {
         score -= 5000;
     }
-    if (P<ScanProbe>(target))
+    if (P<ScanProbe>(target) || P<WarpJammer>(target) || P<Mine>(target))
     {
         score -= 10000;
+        if (distance > 5000)
+            return std::numeric_limits<float>::min();
+    }
+    if (P<MissileWeapon>(target))
+    {
+        score -= 3000;
         if (distance > 5000)
             return std::numeric_limits<float>::min();
     }

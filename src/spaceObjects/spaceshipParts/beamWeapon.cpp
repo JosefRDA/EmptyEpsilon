@@ -1,5 +1,6 @@
 #include "beamWeapon.h"
 #include "spaceObjects/spaceship.h"
+#include "spaceObjects/playerSpaceship.h"
 #include "spaceObjects/beamEffect.h"
 #include "spaceObjects/spaceObject.h"
 #include "preferenceManager.h"
@@ -197,7 +198,7 @@ void BeamWeapon::update(float delta)
     // Check on beam weapons only if we are on the server, have a target, and
     // not paused, and if the beams are cooled down or have a turret arc, and 
     // if the specific weapons station is ok.
-    if (game_server && range > 0.0 && target && (parent->isEnemy(target) || gameGlobalInfo->all_can_be_targeted) && delta > 0 && parent->current_warp == 0.0 && parent->docking_state == DS_NotDocking)
+    if (game_server && range > 0.0 && target && (parent->isEnemy(target) || gameGlobalInfo->all_can_be_targeted) && delta > 0 && parent->docking_state == DS_NotDocking)
     {
         // Get the angle to the target.
         sf::Vector2f diff = target->getPosition() - (parent->getPosition() + sf::rotateVector(sf::Vector2f(position.x, position.y), parent->getRotation()));
@@ -238,13 +239,18 @@ void BeamWeapon::update(float delta)
             }
             
             // Fire if Fire Lock is enabled
-            if (!parent->lock_fire)
+            P<SpaceObject> obj = parent;
+            P<PlayerSpaceship> player = obj;
+            if (player && !player->lock_fire)
                 return;
 
             // Fire only if the target is in the beam's arc and range, the beam
             // has cooled down, and the beam can consume enough energy to fire.
             if (distance < range && cooldown <= 0.0 && fabsf(angle_diff) < arc / 2.0)
             {
+                float current_energy_per_beam_fire = energy_per_beam_fire;
+                if (parent->current_warp > 0)
+                    current_energy_per_beam_fire *= (parent->current_warp + 1) ;
                 if (parent->useEnergy(energy_per_beam_fire)) {
                     parent->addHeat(SYS_BeamWeapons, heat_per_beam_fire);
                     fire(target, parent->beam_system_target);

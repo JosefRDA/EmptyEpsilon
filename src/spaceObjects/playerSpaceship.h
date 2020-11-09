@@ -68,6 +68,8 @@ public:
     constexpr static int max_routes = 7;
     constexpr static int max_waypoints_in_route = 20;
     constexpr static int max_waypoints = 99;
+    // Engineering presets
+    constexpr static int max_engineer_presets_number = 9;
     // Scanning noise and capability
     float scanning_noise = 0.0f;
 
@@ -117,6 +119,8 @@ public:
     bool auto_coolant_enabled;
     // Whether shields are up (true) or down
     bool shields_active;
+    // Whether fire are active (true) or not
+    bool lock_fire;
     // Password to join a ship. Default is empty.
     string control_code;
 
@@ -143,6 +147,11 @@ public:
     std::vector<CustomShipFunction> custom_functions;
 
     sf::Vector2f waypoints[max_routes][max_waypoints_in_route];
+
+    // Presets for engeneering screen
+    int active_engineer_presets_number;
+    float power_presets[SYS_COUNT][max_engineer_presets_number];
+    float coolant_presets[SYS_COUNT][max_engineer_presets_number];
 
     // Ship functionality
     // Capable of scanning a target
@@ -241,6 +250,9 @@ public:
     float getEnergyLevel() { return energy_level; }
     float getEnergyLevelMax() { return max_energy_level; }
 
+    void setActivePresetNumber(int amount) { if (amount >= 0 and amount <= max_engineer_presets_number) active_engineer_presets_number = amount; }
+    int getActivePresetNumber() { return active_engineer_presets_number; }
+
     void setCanScan(bool enabled) { can_scan = enabled; }
     bool getCanScan() { return can_scan; }
     void setCanHack(bool enabled) { can_hack = enabled; }
@@ -290,11 +302,14 @@ public:
     void commandFireTube(int8_t tubeNumber, float missile_target_angle);
     void commandFireTubeAtTarget(int8_t tubeNumber, P<SpaceObject> target);
     void commandSetShields(bool enabled);
+    void commandLockFire(bool enabled);
     void commandMainScreenSetting(EMainScreenSetting mainScreen);
     void commandMainScreenOverlay(EMainScreenOverlay mainScreen);
     void commandScan(P<SpaceObject> object);
     void commandSetSystemPowerRequest(ESystem system, float power_level);
+    void commandSetSystemPowerPreset(ESystem system, int preset, float power_level);
     void commandSetSystemCoolantRequest(ESystem system, float coolant_level);
+    void commandSetSystemCoolantPreset(ESystem system, int preset, float coolant_level);
     void commandSetSystemInstability(ESystem system, int slider, float instability);
     void commandSetSystemRepairRequest(ESystem system, float repair_level);
     void commandDock(P<SpaceObject> station);
@@ -406,7 +421,7 @@ public:
 
     // Waypoint functions
     int getWaypointCount(int route = 0);
-    sf::Vector2f getWaypoint(int index, int route = 0) { if (route > 0 && route <= max_routes && index > 0 && index <= max_waypoints_in_route) return waypoints[route][index - 1]; return sf::Vector2f(0, 0); }
+    sf::Vector2f getWaypoint(int index, int route = 0) { if (route > -1 && route <= max_routes && index > 0 && index <= max_waypoints_in_route) return waypoints[route][index - 1]; return sf::Vector2f(0, 0); }
 
     // Ship control code/password setter
     void setControlCode(string code) { control_code = code.upper(); }

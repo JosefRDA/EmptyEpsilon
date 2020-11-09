@@ -11,6 +11,21 @@ function init()
     -----------------------------------
     ----------- New Features ----------
     -----------------------------------
+
+    -----------------------------------
+    -- ### EE LARP release 1.6-beta ---
+    -----------------------------------
+
+    -- Adds some features in tweak
+        -- Warp speed
+        -- Consumption or production factor by system
+    
+    -- Presets are available for engineering screen. 
+        -- Maximum Preset can be set with setActivePresetNumber and can be tweak
+        -- Preset are saved and can be load from options.ini
+        -- Hotkeys are available for apply and update presets
+    player:setActivePresetNumber(5)
+
     -- A new screen is available, do support science screen
     -- Once fully scanned, a object can be linked to analysis screen
     -- The target analysis screen displayed all informations available for the object
@@ -75,9 +90,9 @@ function init()
 
     -- Scanning capability
     -- Set the maximal level of scanning available for a playership
-    player:setScanningCapability(SCANNED_STATES.SS_SIMPLE_SCAN)
+    player:setScanningCapability(SS_SIMPLE_SCAN)
     -- Cancel with effect to facility of using this test
-    player:setScanningCapability(SCANNED_STATES.SS_FULL_SCAN)
+    player:setScanningCapability(SS_FULL_SCAN)
 
     -- Scanning noise
     -- You can affect scanning dialog for science screen with the function setScanningNoise. If > 0, slider will be randomly affected by the noise (between 0 and 1). If < 0, slider will be automatically moved to the right position (between 0 and -1)

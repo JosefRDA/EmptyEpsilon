@@ -1,6 +1,7 @@
 #include "playerInfo.h"
 #include "gameGlobalInfo.h"
 #include "engineeringScreen.h"
+#include "preferenceManager.h"
 
 #include "screenComponents/shipInternalView.h"
 #include "screenComponents/selfDestructButton.h"
@@ -46,8 +47,8 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     shield_bar = new GuiProgressbar(this, "SHIELDS_BAR", 0.0, 1.0, 0.0);
     shield_bar->setColor(sf::Color(96, 96, 96, 128));
     shield_bar->setPosition(20, i, ATopLeft)->setSize(240, 40);
-    shield_display = new GuiKeyValueDisplay(shield_bar, "SHIELD_DISPLAY", 0.45, tr("shields", "Front"), "");
-    shield_display->isBackground(false)->setIcon("gui/icons/shields-fore")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);
+    shield_display = new GuiKeyValueDisplay(shield_bar, "SHIELD_DISPLAY", 0.45, tr("shields", "Shields"), "");
+    shield_display->isBackground(false)->setIcon("gui/icons/shields-all")->setTextSize(20)->setSize(GuiElement::GuiSizeMax, GuiElement::GuiSizeMax);    
     i += 40;
     oxygen_bar = new GuiProgressbar(this, "OXYGEN_BAR", 0.0, 1.0, 0.0);
     oxygen_bar->setColor(sf::Color(96, 96, 96, 128));
@@ -145,11 +146,11 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     if (gameGlobalInfo->use_system_damage){
         if (gameGlobalInfo->use_nano_repair_crew)
         {
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEALTH", 0.9, tr("health"), ""))->setIcon("gui/icons/hull")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEAT", 0.9, tr("heat"), ""))->setIcon("gui/icons/status_overheat")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_POWER", 0.9, tr("power"), ""))->setIcon("gui/icons/energy")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_COOLANT", 0.9, tr("coolant"), ""))->setIcon("gui/icons/coolant")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
-            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_REPAIR", 0.9, tr("repair"), ""))->setIcon("gui/icons/system_health")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEALTH", 0.9, tr("title", "health"), ""))->setIcon("gui/icons/hull")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_HEAT", 0.9, tr("title", "heat"), ""))->setIcon("gui/icons/status_overheat")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_POWER", 0.9, tr("title", "power"), ""))->setIcon("gui/icons/energy")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_COOLANT", 0.9, tr("title", "coolant"), ""))->setIcon("gui/icons/coolant")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
+            (new GuiKeyValueDisplay(icon_layout, "SYSTEM_REPAIR", 0.9, tr("title", "repair"), ""))->setIcon("gui/icons/system_health")->setTextSize(30)->setSize(150, GuiElement::GuiSizeMax);
         } else {
             (new GuiImage(icon_layout, "SYSTEM_HEALTH_ICON", "gui/icons/hull"))->setSize(150, GuiElement::GuiSizeMax);
             (new GuiImage(icon_layout, "HEAT_ICON", "gui/icons/status_overheat"))->setSize(100, GuiElement::GuiSizeMax);
@@ -235,6 +236,62 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
         }
     }
 
+    // Bottom layout.
+    GuiAutoLayout* layout = new GuiAutoLayout(this, "", GuiAutoLayout::LayoutVerticalBottomToTop);
+    layout->setPosition(-20, -20, ABottomRight)->setSize(300, GuiElement::GuiSizeMax);
+    std::vector<GuiAutoLayout*> presets_buttons_layouts;
+
+    // Presets buttons.
+    presets_button = new GuiToggleButton(layout, "PRESET", tr("preset", "presets"), [this](bool value)
+    {
+        for(int buttonId = 0 ; buttonId < my_spaceship->max_engineer_presets_number*2 ; buttonId++)
+        {
+            if (buttonId < my_spaceship->active_engineer_presets_number*2)
+                presets_buttons.at(buttonId)->setVisible(value);
+            else
+                presets_buttons.at(buttonId)->setVisible(false);
+        }
+    });
+    presets_button->setValue(false);
+    presets_button->setTextSize(20);
+    presets_button->setSize(125, 25);
+
+    for(int presetId=1; presetId < my_spaceship->max_engineer_presets_number + 1; presetId++)
+    {
+
+        GuiAutoLayout* preset_button_layout = new GuiAutoLayout(layout, "", GuiAutoLayout::LayoutHorizontalLeftToRight);
+        preset_button_layout->setSize(300, GuiElement::GuiSizeMax);
+        GuiButton* preset_button_apply = new GuiButton(preset_button_layout, "", tr("preset", "preset") + " " + std::to_string(presetId), [this, presetId]()
+        {
+            applyPreset(presetId);
+            for(GuiButton* button : presets_buttons)
+                button->setVisible(false);
+            presets_button->setValue(false);
+        });
+        preset_button_apply->setVisible(false);
+        preset_button_apply->setTextSize(20);
+        preset_button_apply->setSize(100, 25);   
+        presets_buttons.push_back(preset_button_apply);
+        GuiButton* preset_button_update = new GuiButton(preset_button_layout, "", "", [this, presetId]()
+        {
+            updatePreset(presetId);
+            //my_spaceship->saveToPreferencesEngineerPresets();
+            for(GuiButton* button : presets_buttons)
+                button->setVisible(false);
+            presets_button->setValue(false);
+        });
+        preset_button_update->setVisible(false);
+        preset_button_update->setTextSize(20);
+        preset_button_update->setIcon("gui/icons/save-arrow");
+        preset_button_update->setSize(25, 25);   
+        presets_buttons.push_back(preset_button_update);
+
+        //preset_button_layout->setVisible(false);
+        preset_button_layout->setSize(125, 25);   
+        presets_buttons_layouts.push_back(preset_button_layout);
+    }
+
+
     new ShipsLog(this, crew_position);
     
     (new GuiCustomShipFunctions(this, crew_position, "", my_spaceship))->setPosition(-20, 120, ATopRight)->setSize(250, GuiElement::GuiSizeMax);
@@ -244,10 +301,66 @@ EngineeringScreen::EngineeringScreen(GuiContainer* owner, ECrewPosition crew_pos
     previous_energy_measurement = 0.0;
 }
 
+void EngineeringScreen::applyPreset(int preset)
+{
+    if (my_spaceship)
+    {
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            ESystem system = ESystem(n);
+            my_spaceship->commandSetSystemPowerRequest(system, my_spaceship->power_presets[n][preset-1]);
+            my_spaceship->commandSetSystemCoolantRequest(system, my_spaceship->coolant_presets[n][preset-1]);
+        }
+        my_spaceship->addToShipLog(tr("preset","Preset {id_preset} loaded").format({{"id_preset", string(preset)}}), colorConfig.log_receive_neutral, engineering);
+    }
+}
+
+void EngineeringScreen::updatePreset(int preset)
+{
+    if (my_spaceship)
+    {
+        for(int n = 0; n < SYS_COUNT; n++)
+        {
+            ESystem system = ESystem(n);
+            my_spaceship->commandSetSystemPowerPreset(system, preset, my_spaceship->systems[n].power_request);
+            my_spaceship->commandSetSystemCoolantPreset(system, preset, my_spaceship->systems[n].coolant_request);
+        }
+    }
+    // Save preset to options.ini file
+    string power_saved_presets = "";
+    string coolant_saved_presets = "";
+    for(int n = 0; n < SYS_COUNT-1; n++)
+    {
+        power_saved_presets += string(my_spaceship->systems[n].power_request, 2) + "|";
+        coolant_saved_presets += string(my_spaceship->systems[n].coolant_request, 2) + "|";
+    }
+    power_saved_presets += string(my_spaceship->systems[SYS_COUNT-1].power_request, 2);
+    coolant_saved_presets += string(my_spaceship->systems[SYS_COUNT-1].coolant_request, 2);
+    
+    PreferencesManager::set("ENGINEERING.PRESET_POWER_"+string(preset), power_saved_presets);
+    PreferencesManager::set("ENGINEERING.PRESET_COOLANT_"+string(preset), coolant_saved_presets);
+
+    //Save preferences
+    if (getenv("HOME"))
+        PreferencesManager::save(string(getenv("HOME")) + "/.emptyepsilon/options.ini");
+    else
+        PreferencesManager::save("options.ini");
+}
+
 void EngineeringScreen::onDraw(sf::RenderTarget& window)
 {
     if (my_spaceship)
     {
+        // Update presets number
+        for(int buttonId = 0 ; buttonId < my_spaceship->max_engineer_presets_number*2; buttonId++)
+        {
+            if (buttonId < my_spaceship->active_engineer_presets_number*2)
+                presets_buttons.at(buttonId)->setVisible(presets_button->getValue());
+            else
+                presets_buttons.at(buttonId)->setVisible(false);
+        }
+        presets_button->setVisible(my_spaceship->active_engineer_presets_number > 0);
+
         // Update the energy usage.
         if (previous_energy_measurement == 0.0)
         {
@@ -291,20 +404,18 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
             if (gameGlobalInfo->use_system_damage)
                 repair_display->setValue(string(int(my_spaceship->max_repair)));
         }
-        string oxygen = string(my_spaceship->oxygen_zones[0].oxygen_level / my_spaceship->oxygen_zones[0].oxygen_max * 100,1) + "%";
-        float oxygen_level = my_spaceship->oxygen_zones[0].oxygen_level;
-        float oxygen_max = my_spaceship->oxygen_zones[0].oxygen_max;
-        for(int n=1; n<10; n++)
+        float oxygen_level = 0;
+        float oxygen_max = 0;
+        for(int n=0; n<10; n++)
         {
             if (my_spaceship->oxygen_zones[n].oxygen_max > 0)
             {
-                oxygen += "/" + string(my_spaceship->oxygen_zones[n].oxygen_level / my_spaceship->oxygen_zones[n].oxygen_max * 100,1) + "%";
                 oxygen_level += my_spaceship->oxygen_zones[n].oxygen_level;
                 oxygen_max += my_spaceship->oxygen_zones[n].oxygen_max;
             }
         }
-        oxygen_display->setValue(oxygen);
-        oxygen_bar->setVisible(my_spaceship->hasSystem(SYS_Oxygen));
+        oxygen_display->setValue(string(oxygen_level / oxygen_max * 100,1) + "%");
+        oxygen_bar->setVisible(oxygen_max > 0);
         oxygen_bar->setValue(oxygen_level / oxygen_max);
         
         for(int n=0; n<SYS_COUNT; n++)
@@ -361,20 +472,20 @@ void EngineeringScreen::onDraw(sf::RenderTarget& window)
         if (selected_system != SYS_None)
         {
             ShipSystem& system = my_spaceship->systems[selected_system];
-            power_label->setText("Power: " + string(int(system.power_level * 100)) + "%/" + string(int(system.power_request * 100)) + "%");
+            power_label->setText(tr("Power: {power_level}%/{power_request}%").format({{"power_level", string(int(system.power_request * 100))},{"power_request", string(int(system.power_request * 100))}}));
             power_slider->setValue(system.power_request);
-            coolant_label->setText("Coolant: " + string(int(system.coolant_level / my_spaceship->max_coolant_per_system * 100)) + "%/" + string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / my_spaceship->max_coolant_per_system * 100)) + "%");
+            coolant_label->setText(tr("Coolant: {coolant_level}%/{coolant_request}%").format({{"coolant_level", string(int(system.coolant_level / my_spaceship->max_coolant_per_system * 100))},{"coolant_request", string(int(std::min(system.coolant_request, my_spaceship->max_coolant) / my_spaceship->max_coolant_per_system * 100))}}));
             coolant_slider->setEnable(!my_spaceship->auto_coolant_enabled);
             coolant_slider->setRange(0.0, my_spaceship->max_coolant_per_system);
             coolant_slider->setValue(std::min(system.coolant_request, my_spaceship->max_coolant));
 
             if (gameGlobalInfo->use_nano_repair_crew)
             {
-                coolant_label->setText("Coolant: " + string(system.coolant_level, 1) + " / " + string(my_spaceship->max_coolant_per_system, 1) + "\t\t (Target: " + string(system.coolant_request, 1)+")");
-                power_label->setText("Power: " + string(int(system.power_level * 100)) + "% \t\t (Target: " + string(int(system.power_request * 100)) + "%)");
+                coolant_label->setText(tr("Coolant: {coolant_level} / {coolant_max}\t\t (Target: {coolant_request})").format({{"coolant_level", string(system.coolant_level, 1)},{"coolant_max", string(my_spaceship->max_coolant_per_system, 1)},{"coolant_request", string(system.coolant_request, 1)}}));
+                power_label->setText(tr("Power: {power_level}% \t\t (Target: {power_request}%)").format({{"power_level", string(int(system.power_level * 100))},{"power_request", string(int(system.power_request * 100))}}));
                 if (gameGlobalInfo->use_system_damage)
                 {
-                    repair_label->setText("Repair: " + string(system.repair_level, 1) + " / " + string(my_spaceship->max_repair_per_system, 1) + "\t\t (Target: " + string(system.repair_request, 1)+")");
+                    repair_label->setText(tr("Repair: {repair_level} / {repair_max}\t\t (Target: {repair_request})").format({{"repair_level", string(system.repair_level, 1)},{"repair_max", string(my_spaceship->max_repair_per_system, 1)},{"repair_request", string(system.repair_request, 1)}}));
                     repair_slider->setEnable(!my_spaceship->auto_repair_enabled);
                     repair_slider->setRange(0.0, my_spaceship->max_repair_per_system);
                     repair_slider->setValue(std::min(system.repair_request, my_spaceship->max_repair));
@@ -591,6 +702,17 @@ void EngineeringScreen::onHotkey(const HotkeyResult& key)
             {
                 repair_slider->setValue(0.0f);
                 my_spaceship->commandSetSystemRepairRequest(selected_system, repair_slider->getValue());
+            }
+        }
+
+        for(int presetId=1; presetId < 10; presetId++) 
+        {
+            if (presetId <= my_spaceship->active_engineer_presets_number)
+            {
+                if (key.hotkey == "PRESET_APPLY" + string(presetId))
+                    applyPreset(presetId);
+                if (key.hotkey == "PRESET_UPDATE" + string(presetId))
+                    updatePreset(presetId);
             }
         }
     }
