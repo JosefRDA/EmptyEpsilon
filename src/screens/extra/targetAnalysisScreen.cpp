@@ -183,6 +183,30 @@ TargetAnalysisScreen::TargetAnalysisScreen(GuiContainer *owner)
 
 void TargetAnalysisScreen::onDraw(sf::RenderTarget &window)
 {
+    info_callsign->setValue("-");
+    info_distance->setValue("-");
+    info_heading->setValue("-");
+    info_relspeed->setValue("-");
+    info_faction->setValue("-");
+    info_hull->setValue("-");
+    info_type->setValue("-");
+    info_shields->setValue("-");
+    info_shield_frequency->setFrequency(-1);
+    info_beam_frequency->setFrequency(-1);
+    info_electrical_signal_band->setMaxAmp(0.0f);
+    info_electrical_signal_band->setNoiseError(0.0);
+    info_gravity_signal_band->setMaxAmp(0.0f);
+    info_gravity_signal_band->setPeriodError(0.0f);
+    info_biological_signal_band->setMaxAmp(0.0f);
+    info_biological_signal_band->setPhaseError(0.0f);
+    info_description->setText("");
+    for(int n = 0; n < SYS_COUNT; n++)
+        info_system[n]->hide();
+    for(int n = 0; n < 30; n++)
+        info_template[n]->hide();
+    for(int n = 0; n < 10; n++)
+        info_other[n]->hide();
+
     GuiOverlay::onDraw(window);
     if (my_spaceship)
     {
@@ -206,7 +230,6 @@ void TargetAnalysisScreen::onDraw(sf::RenderTarget &window)
         }
         else
         {
-            indicator_label->setText(tr("Object not fully scanned"));
             indicator_overlay->hide();
             analysis_overlay->show();
             
@@ -241,19 +264,21 @@ void TargetAnalysisScreen::onDraw(sf::RenderTarget &window)
             if (shipTemplate)
             {
                 selected_entry = findDatabaseEntry(shipTemplate->getTypeName());
-                model->setModel(selected_entry->getModelData());
+                if (selected_entry){
+                    model->setModel(selected_entry->getModelData());
 
-                for(int n = 0; n < 30; n++)
-                    info_template[n]->hide();
-                for(unsigned int n = 0; n < selected_entry->keyValuePairs.size(); n++)
-                {
-                    if (n > 30)
-                        break;
-                    if (selected_entry->keyValuePairs[n].key != "")
+                    for(int n = 0; n < 30; n++)
+                        info_template[n]->hide();
+                    for(unsigned int n = 0; n < selected_entry->keyValuePairs.size(); n++)
                     {
-                        info_template[n]->show();
-                        info_template[n]->setKey(selected_entry->keyValuePairs[n].key);
-                        info_template[n]->setValue(selected_entry->keyValuePairs[n].value);
+                        if (n >= 30)
+                            break;
+                        if (selected_entry->keyValuePairs[n].key != "")
+                        {
+                            info_template[n]->show();
+                            info_template[n]->setKey(selected_entry->keyValuePairs[n].key);
+                            info_template[n]->setValue(selected_entry->keyValuePairs[n].value);
+                        }
                     }
                 }
             }
